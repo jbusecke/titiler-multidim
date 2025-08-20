@@ -5,6 +5,7 @@ from helpers import find_string_in_stream
 
 DATA_DIR = "tests/fixtures"
 test_zarr_store = os.path.join(DATA_DIR, "test_zarr_store.zarr")
+test_zarr_store_v3 = os.path.join(DATA_DIR, "nldas3_subsampled.zarr")
 test_netcdf_store = os.path.join(DATA_DIR, "testfile.nc")
 test_unconsolidated_store = os.path.join(DATA_DIR, "unconsolidated.zarr")
 test_pyramid_store = os.path.join(DATA_DIR, "pyramid.zarr")
@@ -12,6 +13,11 @@ test_pyramid_store = os.path.join(DATA_DIR, "pyramid.zarr")
 test_zarr_store_params = {
     "params": {"url": test_zarr_store, "variable": "CDD0", "decode_times": False},
     "variables": ["CDD0", "DISPH", "FROST_DAYS", "GWETPROF"],
+}
+
+test_zarr_store_v3_params = {
+    "params": {"url": test_zarr_store_v3, "variable": "Rainf", "decode_times": False},
+    "variables": ["Rainf"],
 }
 
 test_netcdf_store_params = {
@@ -51,6 +57,8 @@ def get_variables_test(app, ds_params):
 def test_get_variables_test(app):
     return get_variables_test(app, test_zarr_store_params)
 
+def test_get_variables_zarr_v3(app):
+    return get_variables_test(app, test_zarr_store_v3_params)
 
 def test_get_variables_netcdf(app):
     return get_variables_test(app, test_netcdf_store_params)
@@ -81,6 +89,8 @@ def get_info_test(app, ds_params):
 def test_get_info_test(app):
     return get_info_test(app, test_zarr_store_params)
 
+def test_get_info_zarr_v3(app):
+    return get_info_test(app, test_zarr_store_v3_params)
 
 def test_get_info_netcdf(app):
     return get_info_test(app, test_netcdf_store_params)
@@ -112,6 +122,8 @@ def get_tilejson_test(app, ds_params):
 def test_get_tilejson_test(app):
     return get_tilejson_test(app, test_zarr_store_params)
 
+def test_get_tilejson_zarr_v3(app):
+    return get_tilejson_test(app, test_zarr_store_v3_params)
 
 def test_get_tilejson_netcdf(app):
     return get_tilejson_test(app, test_netcdf_store_params)
@@ -142,6 +154,8 @@ def get_tile_test(app, ds_params, zoom: int = 0):
 def test_get_tile_test(app):
     return get_tile_test(app, test_zarr_store_params)
 
+def test_get_tile_zarr_v3(app):
+    return get_tile_test(app, test_zarr_store_v3_params)
 
 def test_get_tile_netcdf(app):
     return get_tile_test(app, test_netcdf_store_params)
@@ -172,6 +186,10 @@ def histogram_test(app, ds_params):
 
 def test_histogram_test(app):
     return histogram_test(app, test_zarr_store_params)
+
+
+def test_histogram_zarr_v3(app):
+    return histogram_test(app, test_zarr_store_v3_params)
 
 
 def test_histogram_netcdf(app):
@@ -214,6 +232,14 @@ def test_map_without_params(app):
 def test_map_with_params(app):
     response = app.get(
         "/WebMercatorQuad/map", params={"url": test_zarr_store, "variable": "CDD0"}
+    )
+    assert response.status_code == 200
+    assert response.headers["Content-Type"] == "text/html; charset=utf-8"
+    assert find_string_in_stream(response, '<div id="map"></div>')
+
+def test_map_with_params_zarr_v3(app):
+    response = app.get(
+        "/WebMercatorQuad/map", params={"url": test_zarr_store_v3, "variable": "Rainf"}
     )
     assert response.status_code == 200
     assert response.headers["Content-Type"] == "text/html; charset=utf-8"
