@@ -20,6 +20,11 @@ uv run uvicorn titiler.multidim.main:app --reload
 To access the docs, visit <http://127.0.0.1:8000/api.html>.
 ![](https://github.com/developmentseed/titiler-multidim/assets/10407788/4368546b-5b60-4cd5-86be-fdd959374b17)
 
+### Running notebooks locally
+```bash
+uv run --with jupyter jupyter lab
+```
+
 ## Development
 
 Tests use data generated locally by using `tests/fixtures/generate_test_*.py` scripts.
